@@ -1,0 +1,109 @@
+# Import necessary libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import warnings
+warnings.filterwarnings("ignore")
+import plotly.express as px
+
+# Load the dataset (assuming the file is named 'bank_dataset.csv')
+data = pd.read_csv('OSHack_BankCustomers.csv')
+
+# Display the first few rows of the dataset
+print(data.head())
+
+# Basic statistics about numerical columns
+print(data.describe())
+
+# Correlation matrix
+numeric_data = data.select_dtypes(include=['number'])
+correlation_matrix = numeric_data.corr()
+ 
+# Data Visualization
+# Pairplot for numerical features
+sns.pairplot(data, diag_kind='kde')
+plt.show()
+
+# Correlation heatmap
+plt.figure(figsize=(12, 10))
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f")
+plt.title('Correlation Heatmap')
+plt.show()
+
+# Countplot for categorical features
+categorical_features = ['job', 'marital', 'education', 'default', 'housing', 'loan', 'contact', 'month', 'OperatingSystems', 'Browser', 'Region', 'TrafficType', 'Weekend']
+
+for feature in categorical_features:
+    plt.figure(figsize=(10, 6))
+    sns.countplot(x=feature, data=data)
+    plt.title(f'{feature} Distribution')
+    plt.xticks(rotation=45)
+    plt.show()
+
+# Boxplot for numerical features
+numerical_features = ['age', 'balance', 'day', 'duration', 'campaign']
+
+for feature in numerical_features:
+    plt.figure(figsize=(8, 6))
+    sns.boxplot(x='loan', y=feature, data=data)
+    plt.title(f'{feature} vs. Loan Status')
+    plt.show()
+
+# Additional specific visualizations based on analysis needs can be added here
+# Countplot for categorical features with X and Y axes labels
+for feature in categorical_features:
+    plt.figure(figsize=(10, 6))
+    countplot = sns.countplot(x=feature, data=data)
+    countplot.set(xlabel='X-Axis Label', ylabel='Y-Axis Label')  # Set X and Y axes labels
+    plt.title(f'{feature} Distribution')
+    plt.xticks(rotation=45)
+    plt.show()
+
+# Boxplot for numerical features with X and Y axes labels
+for feature in numerical_features:
+    plt.figure(figsize=(8, 6))
+    boxplot = sns.boxplot(x='loan', y=feature, data=data)
+    boxplot.set(xlabel='Loan Status', ylabel=feature)  # Set X and Y axes labels
+    plt.title(f'{feature} vs. Loan Status')
+    plt.show()
+    
+# ... (previous code remains unchanged)
+
+# Pie chart for 'marital' feature
+marital_counts = data['marital'].value_counts()
+plt.figure(figsize=(8, 8))
+plt.pie(marital_counts, labels=marital_counts.index, autopct='%1.1f%%', startangle=140, colors=sns.color_palette('pastel'))
+plt.title('Marital Status Distribution')
+plt.show()
+# ... (previous code remains unchanged)
+
+# Line chart for 'balance' vs. 'age'
+plt.figure(figsize=(10, 6))
+sns.lineplot(x='age', y='balance', data=data, ci=None, color='skyblue')
+plt.title('Balance vs. Age')
+plt.xlabel('Age')
+plt.ylabel('Balance')
+plt.show()
+
+fig = px.sunburst(data, path=['marital', 'education', 'job'], title='Sunburst Chart: Marital, Education, and Job Categories')
+fig.show()
+
+# Find highest and lowest data points for the 'balance' feature
+highest_balance = data['balance'].max()
+lowest_balance = data['balance'].min()
+
+# Create a box plot for the highest balance
+plt.figure(figsize=(8, 6))
+sns.boxplot(x='loan', y='balance', data=data[data['balance'] == highest_balance])
+plt.title(f'Highest Balance: {highest_balance} vs. Loan Status')
+plt.xlabel('Loan Status')
+plt.ylabel('Balance')
+plt.show()
+
+# Create a box plot for the lowest balance
+plt.figure(figsize=(8, 6))
+sns.boxplot(x='loan', y='balance', data=data[data['balance'] == lowest_balance])
+plt.title(f'Lowest Balance: {lowest_balance} vs. Loan Status')
+plt.xlabel('Loan Status')
+plt.ylabel('Balance')
+plt.show()
